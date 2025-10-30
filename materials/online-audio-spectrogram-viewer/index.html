@@ -1,0 +1,416 @@
+<html><!-- #BeginTemplate "../../template.dwt" --><head>
+<!-- #BeginEditable "variable" -->
+<!-- #EndEditable -->
+<title>Online Audio Spectrogram Viewer - 素材・ツール | BVE Workshop</title>
+<meta name="description" content="音声を再生し、同時にスペクトログラム表示するツールです。">
+<meta name="keywords" content="BVE,Bve trainsim,ツール,Webアプリ,スペクトログラム">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<meta http-equiv="Content-Script-Type" content="text/javascript">
+<meta http-equiv="imagetoolbar" content="no">
+<link rel="stylesheet" href="../../css/common_res_new.css" type="text/css">
+<script type="text/javascript" async="" src="https://www.googletagmanager.com/gtag/js?id=G-YXZG2FG9LX&amp;cx=c&amp;_slc=1"></script><script id="twitter-wjs" src="https://platform.twitter.com/widgets.js"></script><script async="" src="//www.google-analytics.com/analytics.js"></script><script type="text/javascript" src="../../js/jquery.js"></script>
+<script type="text/javascript" src="../../js/common.js"></script>
+<script type="text/javascript" src="../../js/swfobject.js"></script>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+<meta content="ja" http-equiv="Content-Language">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@bve_ws">
+<meta name="twitter:creator" content="@bve_ws">
+<meta name="twitter:title" content="Online Audio Spectrogram Viewer">
+<meta name="twitter:description" content="音声を再生し、同時にスペクトログラム表示するツールです。">
+<meta name="twitter:image" content="http://bvews.jpn.org/images/logo.png">
+<script type="text/x-mathjax-config;executed=true">
+MathJax.Hub.Config({
+  displayAlign: "left",
+  displayIndent: "2em"
+});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" id=""></script>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-66912859-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+<style type="text/css">.MathJax_Hover_Frame {border-radius: .25em; -webkit-border-radius: .25em; -moz-border-radius: .25em; -khtml-border-radius: .25em; box-shadow: 0px 0px 15px #83A; -webkit-box-shadow: 0px 0px 15px #83A; -moz-box-shadow: 0px 0px 15px #83A; -khtml-box-shadow: 0px 0px 15px #83A; border: 1px solid #A6D ! important; display: inline-block; position: absolute}
+.MathJax_Menu_Button .MathJax_Hover_Arrow {position: absolute; cursor: pointer; display: inline-block; border: 2px solid #AAA; border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px; -khtml-border-radius: 4px; font-family: 'Courier New',Courier; font-size: 9px; color: #F0F0F0}
+.MathJax_Menu_Button .MathJax_Hover_Arrow span {display: block; background-color: #AAA; border: 1px solid; border-radius: 3px; line-height: 0; padding: 4px}
+.MathJax_Hover_Arrow:hover {color: white!important; border: 2px solid #CCC!important}
+.MathJax_Hover_Arrow:hover span {background-color: #CCC!important}
+</style><style type="text/css">#MathJax_About {position: fixed; left: 50%; width: auto; text-align: center; border: 3px outset; padding: 1em 2em; background-color: #DDDDDD; color: black; cursor: default; font-family: message-box; font-size: 120%; font-style: normal; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; border-radius: 15px; -webkit-border-radius: 15px; -moz-border-radius: 15px; -khtml-border-radius: 15px; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_About.MathJax_MousePost {outline: none}
+.MathJax_Menu {position: absolute; background-color: white; color: black; width: auto; padding: 5px 0px; border: 1px solid #CCCCCC; margin: 0; cursor: default; font: menu; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; border-radius: 5px; -webkit-border-radius: 5px; -moz-border-radius: 5px; -khtml-border-radius: 5px; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+.MathJax_MenuItem {padding: 1px 2em; background: transparent}
+.MathJax_MenuArrow {position: absolute; right: .5em; padding-top: .25em; color: #666666; font-size: .75em}
+.MathJax_MenuActive .MathJax_MenuArrow {color: white}
+.MathJax_MenuArrow.RTL {left: .5em; right: auto}
+.MathJax_MenuCheck {position: absolute; left: .7em}
+.MathJax_MenuCheck.RTL {right: .7em; left: auto}
+.MathJax_MenuRadioCheck {position: absolute; left: .7em}
+.MathJax_MenuRadioCheck.RTL {right: .7em; left: auto}
+.MathJax_MenuLabel {padding: 1px 2em 3px 1.33em; font-style: italic}
+.MathJax_MenuRule {border-top: 1px solid #DDDDDD; margin: 4px 3px}
+.MathJax_MenuDisabled {color: GrayText}
+.MathJax_MenuActive {background-color: #606872; color: white}
+.MathJax_MenuDisabled:focus, .MathJax_MenuLabel:focus {background-color: #E8E8E8}
+.MathJax_ContextMenu:focus {outline: none}
+.MathJax_ContextMenu .MathJax_MenuItem:focus {outline: none}
+#MathJax_AboutClose {top: .2em; right: .2em}
+.MathJax_Menu .MathJax_MenuClose {top: -10px; left: -10px}
+.MathJax_MenuClose {position: absolute; cursor: pointer; display: inline-block; border: 2px solid #AAA; border-radius: 18px; -webkit-border-radius: 18px; -moz-border-radius: 18px; -khtml-border-radius: 18px; font-family: 'Courier New',Courier; font-size: 24px; color: #F0F0F0}
+.MathJax_MenuClose span {display: block; background-color: #AAA; border: 1.5px solid; border-radius: 18px; -webkit-border-radius: 18px; -moz-border-radius: 18px; -khtml-border-radius: 18px; line-height: 0; padding: 8px 0 6px}
+.MathJax_MenuClose:hover {color: white!important; border: 2px solid #CCC!important}
+.MathJax_MenuClose:hover span {background-color: #CCC!important}
+.MathJax_MenuClose:hover:focus {outline: none}
+</style><style type="text/css">.MathJax_Preview .MJXf-math {color: inherit!important}
+</style><style type="text/css">.MJX_Assistive_MathML {position: absolute!important; top: 0; left: 0; clip: rect(1px, 1px, 1px, 1px); padding: 1px 0 0 0!important; border: 0!important; height: 1px!important; width: 1px!important; overflow: hidden!important; display: block!important; -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none}
+.MJX_Assistive_MathML.MJX_Assistive_MathML_Block {width: 100%!important}
+</style><style type="text/css">#MathJax_Zoom {position: absolute; background-color: #F0F0F0; overflow: auto; display: block; z-index: 301; padding: .5em; border: 1px solid black; margin: 0; font-weight: normal; font-style: normal; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; -webkit-box-sizing: content-box; -moz-box-sizing: content-box; box-sizing: content-box; box-shadow: 5px 5px 15px #AAAAAA; -webkit-box-shadow: 5px 5px 15px #AAAAAA; -moz-box-shadow: 5px 5px 15px #AAAAAA; -khtml-box-shadow: 5px 5px 15px #AAAAAA; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_ZoomOverlay {position: absolute; left: 0; top: 0; z-index: 300; display: inline-block; width: 100%; height: 100%; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+#MathJax_ZoomFrame {position: relative; display: inline-block; height: 0; width: 0}
+#MathJax_ZoomEventTrap {position: absolute; left: 0; top: 0; z-index: 302; display: inline-block; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+</style><style type="text/css">.MathJax_Preview {color: #888}
+#MathJax_Message {position: fixed; left: 1em; bottom: 1.5em; background-color: #E6E6E6; border: 1px solid #959595; margin: 0px; padding: 2px 8px; z-index: 102; color: black; font-size: 80%; width: auto; white-space: nowrap}
+#MathJax_MSIE_Frame {position: absolute; top: 0; left: 0; width: 0px; z-index: 101; border: 0px; margin: 0px; padding: 0px}
+.MathJax_Error {color: #CC0000; font-style: italic}
+</style><style type="text/css">.MJXp-script {font-size: .8em}
+.MJXp-right {-webkit-transform-origin: right; -moz-transform-origin: right; -ms-transform-origin: right; -o-transform-origin: right; transform-origin: right}
+.MJXp-bold {font-weight: bold}
+.MJXp-italic {font-style: italic}
+.MJXp-scr {font-family: MathJax_Script,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-frak {font-family: MathJax_Fraktur,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-sf {font-family: MathJax_SansSerif,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-cal {font-family: MathJax_Caligraphic,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-mono {font-family: MathJax_Typewriter,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-largeop {font-size: 150%}
+.MJXp-largeop.MJXp-int {vertical-align: -.2em}
+.MJXp-math {display: inline-block; line-height: 1.2; text-indent: 0; font-family: 'Times New Roman',Times,STIXGeneral,serif; white-space: nowrap; border-collapse: collapse}
+.MJXp-display {display: block; text-align: center; margin: 1em 0}
+.MJXp-math span {display: inline-block}
+.MJXp-box {display: block!important; text-align: center}
+.MJXp-box:after {content: " "}
+.MJXp-rule {display: block!important; margin-top: .1em}
+.MJXp-char {display: block!important}
+.MJXp-mo {margin: 0 .15em}
+.MJXp-mfrac {margin: 0 .125em; vertical-align: .25em}
+.MJXp-denom {display: inline-table!important; width: 100%}
+.MJXp-denom > * {display: table-row!important}
+.MJXp-surd {vertical-align: top}
+.MJXp-surd > * {display: block!important}
+.MJXp-script-box > *  {display: table!important; height: 50%}
+.MJXp-script-box > * > * {display: table-cell!important; vertical-align: top}
+.MJXp-script-box > *:last-child > * {vertical-align: bottom}
+.MJXp-script-box > * > * > * {display: block!important}
+.MJXp-mphantom {visibility: hidden}
+.MJXp-munderover, .MJXp-munder {display: inline-table!important}
+.MJXp-over {display: inline-block!important; text-align: center}
+.MJXp-over > * {display: block!important}
+.MJXp-munderover > *, .MJXp-munder > * {display: table-row!important}
+.MJXp-mtable {vertical-align: .25em; margin: 0 .125em}
+.MJXp-mtable > * {display: inline-table!important; vertical-align: middle}
+.MJXp-mtr {display: table-row!important}
+.MJXp-mtd {display: table-cell!important; text-align: center; padding: .5em 0 0 .5em}
+.MJXp-mtr > .MJXp-mtd:first-child {padding-left: 0}
+.MJXp-mtr:first-child > .MJXp-mtd {padding-top: 0}
+.MJXp-mlabeledtr {display: table-row!important}
+.MJXp-mlabeledtr > .MJXp-mtd:first-child {padding-left: 0}
+.MJXp-mlabeledtr:first-child > .MJXp-mtd {padding-top: 0}
+.MJXp-merror {background-color: #FFFF88; color: #CC0000; border: 1px solid #CC0000; padding: 1px 3px; font-style: normal; font-size: 90%}
+.MJXp-scale0 {-webkit-transform: scaleX(.0); -moz-transform: scaleX(.0); -ms-transform: scaleX(.0); -o-transform: scaleX(.0); transform: scaleX(.0)}
+.MJXp-scale1 {-webkit-transform: scaleX(.1); -moz-transform: scaleX(.1); -ms-transform: scaleX(.1); -o-transform: scaleX(.1); transform: scaleX(.1)}
+.MJXp-scale2 {-webkit-transform: scaleX(.2); -moz-transform: scaleX(.2); -ms-transform: scaleX(.2); -o-transform: scaleX(.2); transform: scaleX(.2)}
+.MJXp-scale3 {-webkit-transform: scaleX(.3); -moz-transform: scaleX(.3); -ms-transform: scaleX(.3); -o-transform: scaleX(.3); transform: scaleX(.3)}
+.MJXp-scale4 {-webkit-transform: scaleX(.4); -moz-transform: scaleX(.4); -ms-transform: scaleX(.4); -o-transform: scaleX(.4); transform: scaleX(.4)}
+.MJXp-scale5 {-webkit-transform: scaleX(.5); -moz-transform: scaleX(.5); -ms-transform: scaleX(.5); -o-transform: scaleX(.5); transform: scaleX(.5)}
+.MJXp-scale6 {-webkit-transform: scaleX(.6); -moz-transform: scaleX(.6); -ms-transform: scaleX(.6); -o-transform: scaleX(.6); transform: scaleX(.6)}
+.MJXp-scale7 {-webkit-transform: scaleX(.7); -moz-transform: scaleX(.7); -ms-transform: scaleX(.7); -o-transform: scaleX(.7); transform: scaleX(.7)}
+.MJXp-scale8 {-webkit-transform: scaleX(.8); -moz-transform: scaleX(.8); -ms-transform: scaleX(.8); -o-transform: scaleX(.8); transform: scaleX(.8)}
+.MJXp-scale9 {-webkit-transform: scaleX(.9); -moz-transform: scaleX(.9); -ms-transform: scaleX(.9); -o-transform: scaleX(.9); transform: scaleX(.9)}
+.MathJax_PHTML .noError {vertical-align: ; font-size: 90%; text-align: left; color: black; padding: 1px 3px; border: 1px solid}
+</style></head>
+<body><div id="MathJax_Message" style="display: none;"></div>
+	<div id="top" itemscope="" itemtype="http://schema.org/Article">
+		<header>
+			<div id="title">
+				<a href="http://bvews.jpn.org/">BVE Workshop</a>
+			</div>
+			<div id="menu">
+				<ul>
+					<li><a href="../../about/">ご案内</a></li>
+					<li><a href="../../addons/">BVEアドオン</a></li>
+					<li><a class="active" href="../../materials/">素材・ツール</a></li>
+					<li><a href="../../tutorials/">アドオン制作講座</a></li>
+					<li><a href="../../links/">リンク</a></li>
+				</ul>
+			</div>
+		</header>
+		<nav>
+			<ul>
+				<li itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../../" itemprop="url"><span itemprop="title">Top</span></a></li>
+				<li itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb"><a href="../" itemprop="url"><span itemprop="title">素材・ツール</span></a></li>
+				<li itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.html" itemprop="url"><span itemprop="title">Online Audio Spectrogram Viewer</span></a></li>
+			</ul>
+		</nav>
+		<div id="contents">
+			<div id="main">
+				<main>
+				<article>
+					<h1 itemprop="headline">Online Audio Spectrogram Viewer</h1>
+						<p style="text-align: right;">
+							<time itemprop="datePublished" datetime="2021-10-07" pubdate="pubdate" class="published updated">2021-10-07</time> 公開
+						</p>
+					<!-- #BeginEditable "contents" -->
+					<div itemprop="articleBody">
+          <script async="" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+          <style>
+            input[type=number] {
+              display: block;
+              box-sizing:border-box;
+              width: 54px;
+              margin: auto 0;
+            }
+
+            input:invalid {
+              box-shadow: none;
+            }
+
+            input.invalid {
+              /* border: 1px solid red; */
+              box-shadow: 0px 0px 1px 1px red;
+            }
+
+            select {
+              display: block;
+              box-sizing:border-box;
+              min-width: 54px;
+            }
+
+            /* .label::after {
+              content: ":";
+            } */
+
+            .flex-item {
+              display: flex;
+              justify-content: space-between;
+              padding: 0.5rem;
+              box-sizing: border-box;
+              width: 100%;
+            }
+
+            .separator {
+              display: block;
+              background : #aaa;
+              height: 1px;
+              width: 100%;
+            }
+
+            .bottom-padding {
+              display: block;
+              height: 0.5rem;
+              width: 100%;
+            }
+
+            .result {
+              font-weight: bold;
+            }
+
+            @media screen and (min-width: 640px)
+              {
+                .width-quarter {
+                  width: 25%;
+                }
+                .width-one-third {
+                  width: 33.3%;
+                }
+                .width-half {
+                  width: 50%;
+                }
+                .width-two-third {
+                  width: 66.6%;
+                }
+                .width-full {
+                  width: 100%;
+                }
+
+                .result {
+                  font-size: 16px;
+                }
+            }
+
+            [v-cloak] {
+              display: none !important;
+            }
+          </style>
+          <div id="app" lang="en" style="padding: 0px; margin-bottom: 1rem; background: rgb(238, 238, 238);"><!----> <div style="display: flex;"><canvas width="640" height="480" style="max-width: 100%;"></canvas> <canvas width="640" height="480" style="display: none;"></canvas></div> <div style="border: 1px solid rgb(170, 170, 170);"><div style="display: flex; flex-wrap: wrap;"><audio autoplay=""></audio> <div class="flex-item width-full" style="align-items: center;"><div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: bold;">&nbsp;</div> <div style="white-space: nowrap;"><div><button>Select File</button> <button style="display: none;">Record</button> <button disabled="disabled" style="display: none;">DL Video</button> <a download="video.webm"></a></div></div> <input type="file" accept="audio/*,video/*" style="display: none;"></div> <input type="range" min="0" max="0" disabled="disabled" style="width: 100%; margin: 2px 0px;"> <div class="flex-item width-half"><div><button disabled="disabled">Play</button> <button style="display: inline;">Capture</button></div> <span style="display: block; margin: auto 0px;">00:00:00 / 00:00:00</span></div> <div class="flex-item width-half"><label style="display: flex;"><input type="checkbox" style="display: block; margin: auto 3px;"> <div style="display: block; margin: auto 3px;">Loop</div></label> <label style="display: flex;"><div style="display: block; margin: auto 3px;">Vol.</div> <input type="range" min="0" max="100" style="display: block; width: 100px;"></label></div></div> <div class="separator"></div> <div style="display: flex; flex-wrap: wrap;"><div class="flex-item width-full" style="font-weight: bold;">
+                ▼ Spectrogram Options
+            </div> <div style="display: flex; flex-wrap: wrap;"><label class="flex-item width-half" style="justify-content: start;"><input type="checkbox" style="display: block; margin: auto 3px;"> <div style="display: block; margin: auto 3px;">
+                Clear spectrogram on option change
+            </div></label> <label class="flex-item width-half"><div class="label">Frequency marks</div> <input style="flex-grow: 1; margin-left: 0.5rem;"></label> <label min="0" step="100" class="flex-item width-one-third"><div class="label">
+                Min. freq.[Hz]
+            </div> <input default-value="50" type="number" min="0" step="100" class="" style="width: 60px;"></label> <label class="flex-item width-one-third"><div class="label">
+                Frame rate
+            </div> <select><option value="" disabled="disabled">-</option> <option value="1">60fps</option><option value="2">30fps</option><option value="3">20fps</option><option value="4">15fps</option><option value="5">12fps</option><option value="6">10fps</option></select></label> <label class="flex-item width-one-third"><div class="label">
+                FFT size
+            </div> <select><option value="" disabled="disabled">-</option> <option value="1024">1024</option><option value="2048">2048</option><option value="4096">4096</option><option value="8192">8192</option><option value="16384">16384</option><option value="32768">32768</option></select></label> <label class="flex-item width-one-third"><div class="label">
+                Color
+            </div> <select><option value="" disabled="disabled">-</option> <option value="purple">Purple</option><option value="red">Red</option><option value="blue">Blue</option><option value="audacity">Audacity</option><option value="hue">Hue</option></select></label> <label min="1" max="99" step="1" class="flex-item width-one-third"><div class="label">
+                Gain[dB]
+            </div> <input default-value="50" type="number" min="1" max="99" step="1" class="" style="width: 60px;"></label> <label min="1" step="1" class="flex-item width-one-third"><div class="label">
+                Range[dB]
+            </div> <input default-value="50" type="number" min="1" step="1" class="" style="width: 60px;"></label></div></div> <div class="separator"></div> <div style="display: flex; flex-wrap: wrap;"><div class="flex-item width-full" style="font-weight: bold;">
+                ▼ Frequency Cursor Options
+            </div> <div style="display: flex; flex-wrap: wrap; width: 100%;"><label class="flex-item width-half" style="justify-content: start;"><input type="checkbox" style="display: block; margin: auto 3px;"> <div style="display: block; margin: auto 3px;">
+                Show note name
+            </div></label> <label class="flex-item width-half" style="justify-content: start; display: none;"><input type="checkbox" style="display: block; margin: auto 3px;"> <div style="display: block; margin: auto 3px;">
+                Show train speed
+            </div></label> <label min="1" step="1" class="flex-item width-half" style="display: none;"><div class="label">
+                Driven gear teeth
+            </div> <input default-value="50" type="number" min="1" step="1" class="" style="width: 60px;"></label> <label min="1" step="1" class="flex-item width-half" style="display: none;"><div class="label">
+                Wheel diameter
+            </div> <input default-value="50" type="number" min="1" step="1" class="" style="width: 60px;"></label> <label min="1" step="1" class="flex-item width-half" style="display: none;"><div class="label">
+                Drive gear teeth
+            </div> <input default-value="50" type="number" min="1" step="1" class="" style="width: 60px;"></label> <label class="flex-item width-half" style="display: none;"><div class="label">Gear ratio</div> <div>7.07</div></label></div></div> <div class="separator" style="display: none;"></div> <div style="display: none; flex-wrap: wrap;"><div class="flex-item width-full" style="font-weight: bold;">
+                ▼ Recording Options
+            </div> <div style="display: flex; flex-wrap: wrap; width: 100%;"><label class="flex-item width-half"><div class="label">
+                Video quality
+            </div> <select><option value="" disabled="disabled">-</option> <option value="8000000">8Mbps</option><option value="4000000">4Mbps</option><option value="2000000">2Mbps</option><option value="1000000">1Mbps</option><option value="500000">0.5Mbps</option></select></label> <label class="flex-item width-half"><div class="label">
+                Audio quality
+            </div> <select><option value="" disabled="disabled">-</option> <option value="128000">128kbps</option><option value="96000">96kbps</option><option value="64000">64kbps</option></select></label></div></div></div></div>
+          <h2 id="outline">概要</h2>
+          <p>　任意の音声ファイルのスペクトログラムを、再生しながらリアルタイムで表示します。音声ファイルだけでなく、ブラウザが対応しているならば、動画ファイルの音声のスペクトログラム表示も可能です。</p>
+          <h2 id="history">更新履歴</h2>
+          <dl class="information">
+            <dt>2021-10-07</dt>
+            <dd>初版公開</dd>
+          </dl>
+          <h2 id="usage">使い方</h2>
+          <h3>メディアファイルの再生</h3>
+          <p>
+          　音声ファイルや動画ファイルといったメディアファイルをアプリ画面上にドラッグ＆ドロップするか、「ファイル選択」ボタンより選択して開くことで、その音声をリアルタイムでスペクトログラム表示しながら再生することができます。
+          </p>
+          <h3>端末の音声出力やマイク入力のキャプチャ</h3>
+          <p>
+          　ブラウザが対応している場合、「再生」ボタンの右隣に「キャプ」ボタンが表示されます。この「キャプ」ボタンを押すと、端末の出力音声やマイク入力音声をキャプチャして解析し、その音声のスペクトログラム表示を行います。「停止」ボタンを押すとキャプチャを中止します。
+          </p>
+          <p>
+          　この機能を初めて利用する場合には、当サイトに対して「マイクへのアクセス権限」を与える必要があります。なお、「マイクへのアクセス権」といったような表示がなされていますが、ブラウザの設定より「マイク」の「種類」を選択を行うことにより、端末の出力音声といったマイクとは関係のない音声ソースを選ぶこともできます。
+          </p>
+          <p>
+          　「マイクへのアクセス権限」を得た後にキャプチャにより得る音声データは、当ツール内でのスペクトログラム表示にのみ使用します。外部への送信を行うことは一切ございません。
+          </p>
+          <h3>スペクトログラムの表示設定</h3>
+          <p>　「スペクトログラム設定」より、スペクトログラム表示のカスタマイズを行うことができます。</p>
+          <h4>周波数マーク</h4>
+          <p>　特定の周波数の位置をスペクトログラム上で明示したい場合、その周波数を数値で指定します。また、半角スペース・カンマ・タブのいずれかで区切って複数数値を指定することにより、複数の周波数位置を表示することが可能です。</p>
+          <h4>周波数下限</h4>
+          <p>　スペクトログラム下端の周波数を数値で指定します。</p>
+          <h4>FFTサイズ</h4>
+          <p>　この数値が大きいほど、スペクトログラムの周波数軸（縦軸）の解像度が高くなり、一方で、時間軸（横軸）の解像度が低下します。</p>
+          <h4>ゲイン</h4>
+          <p>　この数値が大きいほど、スペクトログラムは明るく表示されます。</p>
+          <h4>レンジ</h4>
+          <p>　この数値が大きいほど、スペクトログラムのコントラストが小さくなります。</p>
+          <h3>周波数カーソルの表示設定</h3>
+          <p>　「音名を表示」をチェックすると、スペクトログラム上にマウスオーバーしたときに表示される周波数カーソルに音名を併記します。</p>
+          </div>
+          <script src="browser.js"></script>
+          <script src="color-map-generator.js"></script>
+          <script src="color-maps.js"></script>
+          <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+          <!-- <script src="https://cdn.jsdelivr.net/npm/vue"></script> -->
+          <script src="i18n.js"></script>
+          <script src="store.js"></script>
+          <script src="component-input.js"></script>
+          <script src="component-audio-capturer.js"></script>
+          <script src="component-video-recorder.js"></script>
+          <script src="component-spectrogram-canvas.js"></script>
+          <script src="component-audio-player.js"></script>
+          <script src="component-spectrogram-options.js"></script>
+          <script src="component-recording-options.js"></script>
+          <script src="component-frequency-cursor-options.js"></script>
+          <script src="component-accordion-container.js"></script>
+          <script src="app.js"></script>
+          <script src="gradation.js"></script>
+          <!-- #EndEditable -->
+				</article>
+				<hr>
+				<p>
+					<a href="https://twitter.com/share" class="twitter-share-button" data-hashtags="BVE">Tweet</a>
+					<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+				</p>
+				</main>
+			</div>
+			<div id="sub">
+				<aside>
+        <!-- #BeginEditable "sidemenu" -->
+          					<div class="section">
+						<h2>素材一覧</h2>
+							<ul>
+								<li><a href="../image-materials/">画像素材</a></li>
+								<li><a href="../sound-materials/">音声素材</a></li>
+								<li><a href="../junk-materials/">ジャンク品</a></li>
+							</ul>
+			
+						<h2>ツール</h2>
+							<ul>
+								<li><a href="../pitch-flattener/">Pitch Flattener</a></li>
+								<li><a href="../notch-data-maker/">Notch Data Maker</a></li>
+								<li><a href="../motornoise-audition/">Motornoise Audition</a></li>
+								<li><a href="../online-meter-gauge-drawer/">Online Meter Gauge Drawer</a></li>
+								<li><a href="../online-drive-train-calc/">Online Drive Train Calc</a></li>
+								<li><a href="../panel-component-matcher/">Panel Component Matcher</a></li>
+								<li><a href="../audio-loop-maker/">Audio Loop Maker</a></li>
+								<li><a href="../online-audio-spectrogram-viewer/">Online Audio Spectrogram Viewer</a></li>
+								<li><a href="../online-pitch-comparer/">Online Pitch Comparer</a></li>	
+							</ul>
+						<h2>入力プラグイン</h2>
+							<ul>
+								<li><a href="../joystick-interface-plugin/">Joystick Interface Plugin</a></li>
+							</ul>
+						<h2>ATSプラグイン</h2>
+							<ul>
+								<li><a href="../bvets-status-window/">Bvets Status Window</a></li>
+								<li><a href="../bvets-status-logger/">Bvets Status Logger</a></li>
+								<li><a href="../real-analog-gauge/">Real Analog Gauge</a></li>
+							</ul>
+						<h2>実験的</h2>
+							<ul>
+								<li><a href="../unused-structure-finder/">Unused Structure Finder</a></li>
+								<li><a href="../pitch-comparer/">Pitch Comparer</a></li>
+								<li><a href="../online-bvets-table-viewer/">Online Bvets Table Viewer</a></li>
+								<li><a href="../online-needle-damping-simulator/">Online Needle Damping Simulator</a></li>
+								<li><a href="../motornoise-data-maker/">Motornoise Data Maker</a></li>
+								<li><a href="../motornoise-analyzer/">Motornoise Analyzer</a></li>
+								<li><a href="../notch-curve-editor-viewer/">Notch Curve Editor/Viewer</a></li>
+								<li><a href="../motornoise-generator/">Motornoise Generator</a></li>
+								<li><a href="../online-dds-file-viewer/">Online DDS File Viewer</a></li>
+
+															</ul>
+						<!-- /.section -->
+					</div>
+				<!-- #EndEditable -->
+				</aside>
+				<!-- /#sub -->
+			</div>
+			<div id="pageTop">
+				<a href="#">Page Top</a>
+				<!-- /#pageTop -->
+			</div>
+			<!-- /#contents -->
+		</div>
+		<footer>
+			<div class="copyright" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+				Author : <span itemprop="name">BVE Workshop</span>
+			</div>
+		</footer>
+		<!-- /#top -->
+	</div>
+
+
+<iframe scrolling="no" frameborder="0" allowtransparency="true" src="https://platform.twitter.com/widgets/widget_iframe.2f70fb173b9000da126c79afe2098f02.html?origin=https%3A%2F%2Fbvews.jpn.org" title="Twitter settings iframe" style="display: none;"></iframe></body><!-- #EndTemplate --></html>
